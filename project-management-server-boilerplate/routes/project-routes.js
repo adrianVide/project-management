@@ -8,7 +8,9 @@ const Task = require("../models/task");
 // GET route => to get all the projects
 
 router.get('/', function(req, res) {
-    res.send('Returns all the projects');
+    Project.find()
+    .then(response => res.json(response))
+    .catch(err => console.log(error));
 });
 
 

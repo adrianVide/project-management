@@ -5,6 +5,31 @@ const Project = require('../models/project');
 
 const router  = express.Router();
 
+
+// POST route => to create a new task
+
+router.post("/", (req, res, next) => {
+  Task.create({
+    title: req.body.title,
+    description: req.body.description,
+    project: req.body.projectID
+  })
+  .then(response => {
+    Project.findByIdAndUpdate(req.body.projectID, {
+      $push: { tasks: response._id }
+    })
+    .then(theResponse => {
+      res.json(theResponse);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+  })
+  .catch(err => {
+    res.json(err);
+  });
+});
+
 // GET route => to retrieve a specific task
 
 router.get("/:taskId", (req, res, next) => {
@@ -16,31 +41,6 @@ router.get("/:taskId", (req, res, next) => {
         res.json(err);
       });
   });
-
-// POST route => to create a new task
-
-router.post("/", (req, res, next) => {
-    Task.create({
-      title: req.body.title,
-      description: req.body.description,
-      project: req.body.projectID
-    })
-      .then(response => {
-        Project.findByIdAndUpdate(req.body.projectID, {
-          $push: { tasks: response._id }
-        })
-          .then(theResponse => {
-            res.json(theResponse);
-          })
-          .catch(err => {
-            res.json(err);
-          });
-      })
-      .catch(err => {
-        res.json(err);
-      });
-  });
-  
 
 // PUT route => to update a specific task
 
